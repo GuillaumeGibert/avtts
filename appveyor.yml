@@ -11,8 +11,8 @@ configuration:
   - Debug
 
 branches:
-  except:
-   
+  - master
+  - develop
 
 environment:
   CTEST_OUTPUT_ON_FAILURE: 1
