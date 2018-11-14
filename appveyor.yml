@@ -19,7 +19,7 @@ environment:
   CTEST_OUTPUT_ON_FAILURE: 1
   CTEST_PARALLEL_LEVEL: 1
   AVTTS_VERBOSE: 1
-  QTDIR: 'C:\Qt\5.11.1\msvc2015_64'
+  QTDIR: 'C:\Qt\5.11.2\msvc2015_64'
   PATH: '%QTDIR%\bin;%PATH%'
 
 init:
