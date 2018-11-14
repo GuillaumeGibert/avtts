@@ -51,14 +51,14 @@
              <string/>
             </property>
             <property name="placeholderText">
-             <string>Tapez votre texte ici... Puis cliquez sur le bouton &quot;Parle&quot;</string>
+             <string>Tapez votre texte ici... Puis cliquez sur le bouton &quot;Ok&quot;</string>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QPushButton" name="pbSpeak">
             <property name="text">
-             <string>Parle</string>
+             <string>Ok</string>
             </property>
            </widget>
           </item>
@@ -100,121 +100,12 @@
    </widget>
    <addaction name="menuAbout"/>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
   <action name="actionAbout">
    <property name="text">
     <string>About AVTTS...</string>
    </property>
   </action>
-  <action name="actionOpen">
-   <property name="text">
-    <string>Open massage</string>
-   </property>
-  </action>
-  <action name="actionSave">
-   <property name="text">
-    <string>Save</string>
-   </property>
-  </action>
-  <action name="actionSave_as">
-   <property name="text">
-    <string>Save as</string>
-   </property>
-  </action>
-  <action name="actionNew_file">
-   <property name="text">
-    <string>New massage</string>
-   </property>
-  </action>
-  <action name="actionStart_record">
-   <property name="text">
-    <string>Start</string>
-   </property>
-  </action>
-  <action name="actionStop_record">
-   <property name="text">
-    <string>Stop</string>
-   </property>
-  </action>
-  <action name="actionPause_Record">
-   <property name="text">
-    <string>Pause</string>
-   </property>
-  </action>
-  <action name="actionPlay_massage">
-   <property name="text">
-    <string>Play massage</string>
-   </property>
-  </action>
-  <action name="actionRun_massage">
-   <property name="text">
-    <string>Run massage</string>
-   </property>
-  </action>
-  <action name="actionPause_massage">
-   <property name="text">
-    <string>Pause massage</string>
-   </property>
-  </action>
-  <action name="actionStop_massage">
-   <property name="text">
-    <string>Stop massage</string>
-   </property>
-  </action>
-  <action name="actionStart_direct_mode">
-   <property name="text">
-    <string>Start direct mode</string>
-   </property>
-  </action>
-  <action name="actionPlay">
-   <property name="text">
-    <string>Play</string>
-   </property>
-  </action>
-  <action name="actionRun">
-   <property name="text">
-    <string>Run</string>
-   </property>
-  </action>
-  <action name="actionPause">
-   <property name="text">
-    <string>Pause</string>
-   </property>
-  </action>
-  <action name="actionStop">
-   <property name="text">
-    <string>Stop</string>
-   </property>
-  </action>
-  <action name="actionRun_the_direct_mode">
-   <property name="text">
-    <string>Switch to direct mode</string>
-   </property>
-  </action>
-  <action name="actionChange_repository">
-   <property name="text">
-    <string>Change repository</string>
-   </property>
-  </action>
-  <action name="actionChange_morphology">
-   <property name="text">
-    <string>Change morphology</string>
-   </property>
-  </action>
-  <action name="actionCalibrate_tracker">
-   <property name="text">
-    <string>Calibrate tracker</string>
-   </property>
-  </action>
-  <action name="actionUse_the_values_of_the_sensor">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Use the values of the sensor</string>
-   </property>
-  </action>
- </widget>
+  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>
  <connections/>
