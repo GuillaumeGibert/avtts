@@ -47,10 +47,10 @@ build:
   parallel: false
   verbosity: minimal
 
-after_build:
-  - cmd: cmake --build %APPVEYOR_BUILD_FOLDER%\build --target PACKAGE --config %CONFIGURATION%
-  - cmd: move /Y %APPVEYOR_BUILD_FOLDER%\build\*.exe %APPVEYOR_BUILD_FOLDER%
+#after_build:
+ # - cmd: cmake --build %APPVEYOR_BUILD_FOLDER%\build --target PACKAGE --config %CONFIGURATION%
+ # - cmd: move /Y %APPVEYOR_BUILD_FOLDER%\build\*.exe %APPVEYOR_BUILD_FOLDER%
 
-test_script:
-  - cmd: cmake --build %APPVEYOR_BUILD_FOLDER%\build --target RUN_TESTS --config %CONFIGURATION%
+#test_script:
+  #- cmd: cmake --build %APPVEYOR_BUILD_FOLDER%\build --target RUN_TESTS --config %CONFIGURATION%
 
