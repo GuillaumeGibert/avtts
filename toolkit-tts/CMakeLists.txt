@@ -20,7 +20,7 @@ add_jar(
 get_target_property(_jarFile toolkit-marytts JAR_FILE)
 get_target_property(_classDir toolkit-marytts CLASSDIR)
 
-set(JAVA_CLASS_DIRECTORY "${_classDir}/application")
+set(JAVA_CLASS_DIRECTORY "${_classDir}/")
 set(DESTINATION_DEBUG "../bin/Debug/")
 set(DESTINATION_RELEASE "../bin/Release/")
 
