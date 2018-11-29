@@ -16,13 +16,13 @@ void HumanModel::resetVariables()
 	m_bIsCoordComputed = false;
 
 	m_i32NbPCAParameters = 0;
-	m_i32NbIntermediateParameters = 0;
+	m_i32NbTransformations = 0;
 	m_i32NbVertices = 0;
 
 	m_vFirstLevelMeanModel.clear();
 	m_vFirstLevelCovarianceModel.clear();
 
-	m_vIntermediatePC.clear();
+	m_vTransformations.clear();
 
 	m_vSecondLevelMeanModel.clear();
 	m_vSecondLevelCovarianceModel.clear();
@@ -46,62 +46,104 @@ bool HumanModel::load(QString sHumanModelFilename)
 	{
 		QTextStream in(&file);
 		
-		while(!in.atEnd()) 
+		// 1st line
+		QString line = in.readLine();
+		QStringList list = line.split(QRegExp("\\s+"), QString::SkipEmptyParts);
+		m_i32NbTransformations = list[0].toInt();
+
+		// 2nd line
+		line = in.readLine();
+		list = line.split(QRegExp("\\s+"), QString::SkipEmptyParts);
+		m_i32NbPCAParameters = list[0].toInt();
+		for (int l_i32PCAParameter = 0; l_i32PCAParameter < m_i32NbPCAParameters; l_i32PCAParameter++)
 		{
-			QString line = in.readLine();    
-			QStringList fields = line.split(" ");    
-			QStringList list = line.split(QRegExp("\\s+"), QString::SkipEmptyParts);
+			m_vPCANames.push_back(list[l_i32PCAParameter+1]);
 		}
-		
+
+		// 1st level model
+		for (int l_i32Transformation = 0; l_i32Transformation < m_i32NbTransformations; l_i32Transformation++)
+		{
+			line = in.readLine();
+			list = line.split(QRegExp("\\s+"), QString::SkipEmptyParts);
+			m_vTransformationNames.push_back(list[0]);
+			m_vTransformationTypes.push_back(list[1]);
+			m_vFirstLevelMeanModel.push_back(list[2].toDouble());
+
+			for (int l_i32PCAParameter = 0; l_i32PCAParameter < m_i32NbPCAParameters; l_i32PCAParameter++)
+			{
+				m_vFirstLevelCovarianceModel.push_back(list[3 + l_i32PCAParameter].toDouble());
+			}
+		}
+
+		// Nb vertex
+		line = in.readLine();
+		list = line.split(QRegExp("\\s+"), QString::SkipEmptyParts);
+		m_i32NbVertices = list[0].toInt();
+
+		// 2nd level model
+		for (int l_i32Vertices = 0; l_i32Vertices < m_i32NbVertices; l_i32Vertices++)
+		{
+			line = in.readLine(); // vertex number
+
+			for (int l_i32Coord = 0; l_i32Coord < 3; l_i32Coord++)
+			{
+				line = in.readLine();
+				list = line.split(QRegExp("\\s+"), QString::SkipEmptyParts);
+
+				m_vSecondLevelMeanModel.push_back(list[0].toDouble());
+
+				for (int l_i32Transformation = 0; l_i32Transformation < m_i32NbTransformations; l_i32Transformation++)
+				{
+					m_vSecondLevelCovarianceModel.push_back(list[1 + l_i32Transformation].toDouble());
+				}
+			}
+		}
+
 		file.close();
 		
 		m_bIsHumanModelLoaded = true;
 	}
 	
 	// checks if the model is plausible
-	// MeanModel.size() = 3(x,y,z)*m_i32NbVertices
-	//CovarianceModel.size() = m_i32NbPCAParameters x 3*m_i32NbVertices
-	
-	
+	if (m_vFirstLevelMeanModel.size() != m_i32NbTransformations)
+	{
+		m_bIsHumanModelLoaded = false;
+		qDebug() << "[ERROR] (HumanModel::load) First level mean model is corrupted!";
+
+	}
+	if (m_vFirstLevelCovarianceModel.size() != 3 * m_i32NbTransformations * m_i32NbPCAParameters)
+	{
+		m_bIsHumanModelLoaded = false;
+		qDebug() << "[ERROR] (HumanModel::load) First level covariance model is corrupted!";
+	}
+	if (m_vSecondLevelMeanModel.size() != m_i32NbVertices)
+	{
+		m_bIsHumanModelLoaded = false;
+		qDebug() << "[ERROR] (HumanModel::load) Second level mean model is corrupted!";
+
+	}
+	if (m_vSecondLevelCovarianceModel.size() != 3 * m_i32NbTransformations * m_i32NbVertices)
+	{
+		m_bIsHumanModelLoaded = false;
+		qDebug() << "[ERROR] (HumanModel::load) Second level covariance model is corrupted!";
+	}
+
 	return m_bIsHumanModelLoaded;
 }
 
-void HumanModel::firstLevelTransform(std::vector<double> vPCValues)
-{
-	m_vIntermediatePC.clear();
-
-	for (int l_i32IntermediateParams = 0; l_i32IntermediateParams < m_i32NbIntermediateParameters; l_i32IntermediateParams++)
-	{
-		double l_dCovarianceResult = 0.0;
-		for (int l_i32PCAParameter = 0; l_i32PCAParameter < m_i32NbPCAParameters; l_i32PCAParameter++)
-		{
-			l_dCovarianceResult += vPCValues[l_i32PCAParameter] * m_vFirstLevelCovarianceModel[m_i32NbPCAParameters*l_i32IntermediateParams + l_i32PCAParameter];
-		}
-
-		double l_dResult = 0.0;
-		//if (LIN)
-			l_dResult = l_dCovarianceResult + m_vFirstLevelMeanModel[l_i32IntermediateParams];
-			l_dResult = cos(l_dCovarianceResult + m_vFirstLevelMeanModel[l_i32IntermediateParams]);
-			l_dResult = sin(l_dCovarianceResult + m_vFirstLevelMeanModel[l_i32IntermediateParams]);
-
-
-		m_vIntermediatePC.push_back(l_dResult);
-	}
-}
-
-void HumanModel::secondLevelTransform()
+void HumanModel::transformations2Vertices()
 {
 	m_vVertices.clear();
 
 	// 2nd level
-	for (int l_i32coord = 0; l_i32coord < 3*m_i32NbVertices; l_i32coord++)
+	for (int l_i32coord = 0; l_i32coord < 3 * m_i32NbVertices; l_i32coord++)
 	{
 		double l_dCovarianceResult = 0.0;
-		for (int l_i32IntermediateParams = 0; l_i32IntermediateParams < m_i32NbIntermediateParameters; l_i32IntermediateParams++)
+		for (int l_i32IntermediateParams = 0; l_i32IntermediateParams < m_i32NbTransformations; l_i32IntermediateParams++)
 		{
-			l_dCovarianceResult += m_vIntermediatePC[l_i32IntermediateParams] * m_vSecondLevelCovarianceModel[m_i32NbPCAParameters*l_i32coord + l_i32IntermediateParams];
+			l_dCovarianceResult += m_vTransformations[l_i32IntermediateParams] * m_vSecondLevelCovarianceModel[m_i32NbPCAParameters*l_i32coord + l_i32IntermediateParams];
 		}
-		
+
 		m_vVertices.push_back(l_dCovarianceResult + m_vSecondLevelMeanModel[l_i32coord]);
 	}
 }
@@ -132,14 +174,19 @@ std::vector<double> HumanModel::getSecondLevelCovarianceModel()
 	return m_vSecondLevelCovarianceModel;
 }
 
+std::vector<double> HumanModel::getRigidMotion()
+{
+	return m_vRigidMotion;
+}
+
 int HumanModel::getNbPCAParameters()
 {
 	return m_i32NbPCAParameters;
 }
 
-int HumanModel::getNbIntermediateParameters()
+int HumanModel::getNbTransformations()
 {
-	return m_i32NbIntermediateParameters;
+	return m_i32NbTransformations;
 }
 
 int HumanModel::getNbVertices()
@@ -183,9 +230,9 @@ void HumanModel::setNbPCAParameters(int i32NbPCAParameters)
 	m_i32NbPCAParameters = i32NbPCAParameters;
 }
 
-void HumanModel::setNbIntermediateParameters(int i32NbIntermediateParameters)
+void HumanModel::setNbTransformations(int i32NbIntermediateParameters)
 {
-	m_i32NbIntermediateParameters = i32NbIntermediateParameters;
+	m_i32NbTransformations = i32NbIntermediateParameters;
 }
 
 void HumanModel::setNbVertices(int i32NbVertices)

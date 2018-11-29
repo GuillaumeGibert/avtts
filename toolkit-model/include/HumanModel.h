@@ -19,8 +19,8 @@ public:
 // Methods
 public:
 	bool load(QString sHumanModelFilename);
-	void firstLevelTransform(std::vector<double>);
-	void secondLevelTransform();
+	virtual void pc2Transformations(std::vector<double>)=0;
+	void transformations2Vertices();
 
 	std::vector<double> getVertices();
 	std::vector<double> getRigidMotion();
@@ -29,7 +29,7 @@ public:
 	std::vector<double> getSecondLevelMeanModel();
 	std::vector<double> getSecondLevelCovarianceModel();
 	int getNbPCAParameters();
-	int getNbIntermediateParameters();
+	int getNbTransformations();
 	int getNbVertices();
 	bool getIsHumanModelLoaded();
 	bool getIsCoordComputed();
@@ -39,7 +39,7 @@ public:
 	void setSecondLevelMeanModel(std::vector<double>);
 	void setSecondLevelCovarianceModel(std::vector<double>);
 	void setNbPCAParameters(int);
-	void setNbIntermediateParameters(int);
+	void setNbTransformations(int);
 	void setNbVertices(int);
 
 protected:
@@ -48,13 +48,17 @@ protected:
 private:
 	
 // Variables
-private:
+protected:
 	bool m_bIsHumanModelLoaded;
 	bool m_bIsCoordComputed;
 
 	int m_i32NbPCAParameters;
-	int m_i32NbIntermediateParameters;
+	int m_i32NbTransformations;
 	int m_i32NbVertices;
+
+	std::vector<QString> m_vPCANames;
+	std::vector<QString> m_vTransformationNames;
+	std::vector<QString> m_vTransformationTypes;
 
 	std::vector<double> m_vFirstLevelMeanModel;
 	std::vector<double> m_vFirstLevelCovarianceModel;
@@ -62,8 +66,10 @@ private:
 	std::vector<double> m_vSecondLevelMeanModel;
 	std::vector<double> m_vSecondLevelCovarianceModel;
 
-	std::vector<double> m_vIntermediatePC;
+	std::vector<double> m_vTransformations;
 	std::vector<double> m_vVertices;
+
+	std::vector<double> m_vRigidMotion;
 	
 	
 };
