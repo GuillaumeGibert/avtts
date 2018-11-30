@@ -18,10 +18,9 @@ public:
 
 // Methods
 public:
-	bool load(QString sHumanModelFilename);
-	virtual void pc2Transformations(std::vector<double>)=0;
-	void transformations2Vertices();
-
+	bool load(QString);
+	bool updateGeometry(std::vector<double>);
+	
 	std::vector<double> getVertices();
 	std::vector<double> getRigidMotion();
 	std::vector<double> getFirstLevelMeanModel();
@@ -44,6 +43,8 @@ public:
 
 protected:
 	void resetVariables();
+	bool pc2Transformations(std::vector<double>);
+	bool transformations2Vertices();
 	
 private:
 	
@@ -53,6 +54,7 @@ protected:
 	bool m_bIsCoordComputed;
 
 	int m_i32NbPCAParameters;
+	int m_i32NbRotoTranslationParameters;
 	int m_i32NbTransformations;
 	int m_i32NbVertices;
 
@@ -71,7 +73,8 @@ protected:
 
 	std::vector<double> m_vRigidMotion;
 	
-	
+	std::vector<double> m_vCenterOfRotation;
+	bool m_bIsCenterOfRotationSet;
 };
 
 #endif
